@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiempo Actual</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+  <h1>Información del tiempo actual</h1>
+  <button id="boton">Mostrar tiempo</button>
+
+  <div id="resultado" style="margin-top: 20px; font-size: 1.2em;"></div>
+
+  <script>
+    document.getElementById('boton').addEventListener('click', () => {
+      const resultado = document.getElementById('resultado');
+      resultado.textContent = "Obteniendo ubicación y datos del tiempo...";
+
+      // Pedimos la ubicación al navegador
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        // Llamamos a la API de Open-Meteo
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+          .then(res => res.json())
+          .then(data => {
+            const clima = data.current_weather;
+			const texto = JSON.stringify(clima);
+			alert(texto);
+          })
+          .catch(() => resultado.textContent = "No se pudieron obtener los datos del tiempo.");
+      }, 
+      () => resultado.textContent = "No se pudo obtener tu ubicación.");
+    });
+  </script>
+</body>
+</html>
